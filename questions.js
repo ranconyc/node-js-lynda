@@ -1,35 +1,36 @@
-// process.stdin.on('data', () => {}) collect data from the termial. act like litsener. 
-// process.stdout.write('hello ') write somting to the terminal.
+const readline = require('readline'); 
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+})
 
 
 const questions = [
-  'Waht is your name?',
-  'Waht would you rather be doing?',
-  'Waht is your preferred programming language?'
+  'What is your name? ',
+  'Where do you live? ',
+  'What are you going to do with Node js? '
 ];
 
-const ask = (i=0) => {
-  process.stdout.write(`\n\n\n${questions[i]}`);
-  process.stdout.write(' > ');
-}
+const collectAnswers = (questions, done) => {
+  const answers = [];
+  const [firstQustion] = questions;
 
-ask();
-const answers =[];
-process.stdin.on('data', (data) => {
-  answers.push(data.toString().trim());
-  if (answers.length < questions.length) {
-    ask(answers.length)
-  } else {
-    process.exit();
-  }
-});
+  const questionAnswerd = answer => {
+    answers.push(answer);
+    if (answers.length < questions.length) {
+      rl.question(questions[answers.length], questionAnswerd);
+    } else {
+      done(answers);
+    }
+  }; 
+  rl.question(firstQustion, questionAnswerd);
+};
 
-process.on('exit', () => {
-  const [name, activity, lang] = answers
-  console.log(`
 
-    thank you for your answers,
-    go ${activity} ${name} you can wirte ${lang} code later.
-    
-  `);
+
+collectAnswers(questions, answers => {
+  console.log('Thank you for your answers.');
+  console.log(answers);
+  process.exit();
 });
